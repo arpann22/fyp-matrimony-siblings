@@ -655,13 +655,13 @@ require_once('db_connect.php');
 							<h5 style="margin-left: 3px; margin-top: 10px;">Mother Name:</h5>
 							<input required id="form_mother_name" type="text" class="form-control" name=""
 								placeholder="Mother Name..">
-
 							<input type="checkbox" required id="check" name="rules" value="YES">
 							<label for="rules"><a href="terms.php">Terms</a> I agreed with the terms</label>
 							<div id="result"></div>
 							<button class="btn btn-info form-control" id="regbtn"
 								style="font-family: 'Poppins'">Register</button>
 						</form>
+
 
 						<h5>Already have an acount? <a href="#" onclick="openModal1()" class="nav_content">Log in</a>
 						</h5>
@@ -1189,6 +1189,188 @@ require_once('db_connect.php');
 				<?php
 			}
 			?>
+
+		</div>
+		<div class="sp3 section3" id="recommendation">
+			<h4 style="color:#662e91; margin-bottom: 10px;">Recommendation:</h4>
+			<?php
+			// $rm = mysqli_query($con, "SELECT * FROM tipshoi ORDER BY id DESC;");
+			$curr_user_age = "";
+			$curr_user_gender = "";
+			$curr_user_father = mysqli_query($con, "SELECT gender, age, father_name FROM biodata bd WHERE  bd.user = '{$_SESSION['user']}' ;");
+			foreach ($curr_user_father as $curr_user_fathers) {
+				$curr_user_father = $curr_user_fathers["father_name"];
+				$curr_user_age = $curr_user_fathers["age"];
+				$curr_user_gender = $curr_user_fathers['gender'];
+
+			}
+
+			/* The above code is commented out, so it is not doing anything. However, it appears to be PHP code
+																																																																											that is converting a variable called `` from a string to an integer using the `(int)`
+																																																																											typecasting operator. It then calculates a maximum and minimum age range by adding and subtracting 2
+																																																																											from the integer value of ``. The `echo` statements are used to output the values of
+																																																																											the variables and their types for debugging purposes. */
+			if ($curr_user_gender == 'Male') {
+				// echo $curr_user_age;
+				$user_age_max = (int) $curr_user_age + 2;
+				$user_age_min = (int) $curr_user_age - 2;
+				// die(var_dump($curr_user_father));
+				$rec = "SELECT tp.mail as mail, tp.id as id, tp.name as name, tp.gender as gender 
+							FROM tipshoi tp, biodata bd 
+							WHERE tp.mail = bd.user AND tp.mail != '{$_SESSION['user']}' AND bd.father_name != '$curr_user_father' AND bd.age BETWEEN '$user_age_min' AND '$user_age_max' AND bd.gender= 'Female' ORDER BY tp.id DESC;";
+				// die($rec);
+			
+				$re = mysqli_query($con, $rec);
+				// var_dump($rm);
+			
+				if (mysqli_num_rows($re) > 0) {
+					$no = mysqli_num_rows($re);
+					if ($no > 3) {
+						$no = 3;
+					}
+
+					for ($i = 0; $i < $no; $i++) {
+						$rowm = mysqli_fetch_array($re);
+						$member = $rowm['mail'];
+						$user_id = $rowm['id'];
+						$mem_name = $rowm['name'];
+						$gender = $rowm['gender'];
+						if ($gender == "Male") {
+							$gender = "Male";
+						} else {
+							$gender = "Female";
+						}
+
+						$rdp = mysqli_query($con, "SELECT * FROM dp where user = '$member'");
+						if (mysqli_num_rows($rdp) > 0) {
+							$rww = mysqli_fetch_array($rdp);
+							$val = $rww['num'];
+							$imageName = $member . '_dp' . $val . '.png';
+						} else {
+							$imageName = 'avatar.png';
+						}
+						if ($member != "admin@admin.com") {
+
+
+							?>
+							<div class="pull-left" style="margin-right: 30px;">
+								<img src="dp/<?php echo $imageName; ?>" class="rounded-circle" width="70">
+							</div>
+
+							<div class="">
+								<a href="profile.php?us1031gdh312k=<?php echo $user_id; ?>">
+									<h5 style="color: #7f7f7f;">
+										<?php echo $mem_name; ?>
+									</h5>
+								</a>
+
+								<h6>
+									<?php echo $gender; ?>
+								</h6>
+							</div>
+							<?php
+							if ($i < $no - 1) {
+								?>
+								<hr style="margin-top: 3px;">
+								<br>
+								<?php
+							}
+						}
+					}
+					?>
+					<br>
+					<a href="search.php"><button class="btn btn-outline-info"
+							style=" margin-top: 10px; margin-bottom: 10px;">See more</button></a>
+					<?php
+				} else {
+					?>
+					<h5 style="color: #7f7f7f; text-align: center;">Nothing to show</h5>
+					<?php
+
+				}
+			} else {
+				// echo $curr_user_age;
+				$user_age_max = (int) $curr_user_age + 2;
+				$user_age_min = (int) $curr_user_age - 2;
+				// die(var_dump($curr_user_father));
+				$rec = "SELECT tp.mail as mail, tp.id as id, tp.name as name, tp.gender as gender 
+							FROM tipshoi tp, biodata bd 
+							WHERE tp.mail = bd.user AND tp.mail != '{$_SESSION['user']}' AND bd.father_name != '$curr_user_father' AND bd.age BETWEEN '$user_age_min' AND '$user_age_max' AND bd.gender= 'Male' ORDER BY tp.id DESC;";
+				// die($rec);
+			
+				$re = mysqli_query($con, $rec);
+				// var_dump($rm);
+			
+				if (mysqli_num_rows($re) > 0) {
+					$no = mysqli_num_rows($re);
+					if ($no > 3) {
+						$no = 3;
+					}
+
+					for ($i = 0; $i < $no; $i++) {
+						$rowm = mysqli_fetch_array($re);
+						$member = $rowm['mail'];
+						$user_id = $rowm['id'];
+						$mem_name = $rowm['name'];
+						$gender = $rowm['gender'];
+						if ($gender == "Male") {
+							$gender = "Male";
+						} else {
+							$gender = "Female";
+						}
+
+						$rdp = mysqli_query($con, "SELECT * FROM dp where user = '$member'");
+						if (mysqli_num_rows($rdp) > 0) {
+							$rww = mysqli_fetch_array($rdp);
+							$val = $rww['num'];
+							$imageName = $member . '_dp' . $val . '.png';
+						} else {
+							$imageName = 'avatar.png';
+						}
+						if ($member != "admin@admin.com") {
+
+
+							?>
+							<div class="pull-left" style="margin-right: 30px;">
+								<img src="dp/<?php echo $imageName; ?>" class="rounded-circle" width="70">
+							</div>
+
+							<div class="">
+								<a href="profile.php?us1031gdh312k=<?php echo $user_id; ?>">
+									<h5 style="color: #7f7f7f;">
+										<?php echo $mem_name; ?>
+									</h5>
+								</a>
+
+								<h6>
+									<?php echo $gender; ?>
+								</h6>
+							</div>
+							<?php
+							if ($i < $no - 1) {
+								?>
+								<hr style="margin-top: 3px;">
+								<br>
+								<?php
+							}
+						}
+					}
+					?>
+					<br>
+					<a href="search.php"><button class="btn btn-outline-info"
+							style=" margin-top: 10px; margin-bottom: 10px;">See more</button></a>
+					<?php
+				} else {
+					?>
+					<h5 style="color: #7f7f7f; text-align: center;">Nothing to show</h5>
+					<?php
+
+				}
+			}
+			?>
+
+
+
 		</div>
 		<!-- <div class="section3 col-md-4" style="background: white; height: inherit; padding: 10px 17px;">
 			<h4 style="color: #662e91;">Let's take a look at how to complete Registration and Biodata at Marriage 20:
@@ -1197,6 +1379,7 @@ require_once('db_connect.php');
 			</iframe>
 		</div> -->
 	</div>
+
 	<div style="width: 100%; margin-top: 15px; ">
 		<div style=" background: white; margin: 0 auto; padding-bottom: 5px; padding-top: 10px;" class="section4">
 			<h2 style="text-align: center; color: #662e91;">Most recent wedding post</h2>

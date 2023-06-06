@@ -318,6 +318,17 @@ CREATE TABLE `tipshoi` (
   -- 'mother_name' varchar(50) NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+
+--Table for user-prefff----------------
+CREATE TABLE `userpref`(
+  `pref-age` int(11) NOT NULL,
+  `pref-religion` varchar(100) NOT NULL,
+  `pref-education` varchar(100) NOT NULL
+)
+-- INSERT INTO `userpref` (`id`, `name`, `gender`, `mail`) VALUES
+-- (1, 'Saurabh', 'Male', 'saurabh@gmail.com'),
+-- (2, 'Raghav Shivaji Bhosale', 'Male', 'raghav@gmail.com'),
+-- (3, 'Sushma Ahire', 'Female', 'sushma@gmail.com');
 --
 -- Dumping data for table `tipshoi`
 --
